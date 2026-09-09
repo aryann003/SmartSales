@@ -22,3 +22,31 @@ class OrderItemViewSet(viewsets.ModelViewSet):
 class ReturnViewSet(viewsets.ModelViewSet):
     queryset = Return.objects.all()
     serializer_class = ReturnSerializer
+
+
+
+
+from django.shortcuts import render, redirect
+from .forms import OrderForm
+
+def order_list(request):
+    orders = Order.objects.all()
+    return render(request, 'orders/list.html', {'orders': orders})
+
+def order_add(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('order_list')
+    else:
+        form = OrderForm()
+    return render(request, 'orders/form.html', {'form': form})
+
+
+
+from .models import Return
+
+def return_list(request):
+    returns = Return.objects.all()
+    return render(request, 'orders/returns_list.html', {'returns': returns})

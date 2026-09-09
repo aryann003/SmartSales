@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Returns</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Order</th>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Reason</th>
+      <th>Return Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in returns %}
+    <tr>
+      <td>{{ r.order }}</td>
+      <td>{{ r.product }}</td>
+      <td>{{ r.quantity }}</td>
+      <td>{{ r.reason }}</td>
+      <td>{{ r.return_date }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Orders</h2>
+<a href="{% url 'order_add' %}" class="btn btn-primary mb-3">+ Add Order</a>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Customer</th>
+      <th>Order Date</th>
+      <th>Status</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>{{ o.customer }}</td>
+      <td>{{ o.order_date }}</td>
+      <td>{{ o.status }}</td>
+      <td>{{ o.total_amount }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
