@@ -7,6 +7,10 @@ from customers.views import CustomerViewSet, customer_list, customer_add
 from products.views import CategoryViewSet, ProductViewSet, product_list, product_add
 from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_list, order_add, return_list
 
+from analytics.views import (
+    RevenueAnalyticsView, OrdersAnalyticsView, 
+    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView
+)
 router = DefaultRouter()
 router.register(r'customers', CustomerViewSet)
 router.register(r'categories', CategoryViewSet)
@@ -31,4 +35,10 @@ urlpatterns = [
     path('orders/add/', order_add, name='order_add'),
 
     path('returns/', return_list, name='return_list'),
+
+    path('api/analytics/revenue/', RevenueAnalyticsView.as_view(), name='revenue_analytics'),
+    path('api/analytics/orders/', OrdersAnalyticsView.as_view(), name='orders_analytics'),
+path('api/analytics/products/', ProductsAnalyticsView.as_view(), name='products_analytics'),
+path('api/analytics/customers/', CustomersAnalyticsView.as_view(), name='customers_analytics'),
+path('api/analytics/rfm/', RFMAnalyticsView.as_view(), name='rfm_analytics'),
 ]
