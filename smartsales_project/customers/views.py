@@ -17,7 +17,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 
 def customer_list(request):
-    customers = Customer.objects.all()
+    customers = Customer.objects.all()[:100]
     return render(request, 'customers/list.html', {'customers' :customers})
 
 

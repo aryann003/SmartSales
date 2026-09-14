@@ -30,7 +30,7 @@ from django.shortcuts import render, redirect
 from .forms import OrderForm
 
 def order_list(request):
-    orders = Order.objects.all()
+    orders = Order.objects.select_related('customer').all()[:100]
     return render(request, 'orders/list.html', {'orders': orders})
 
 def order_add(request):

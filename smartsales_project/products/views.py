@@ -24,7 +24,7 @@ from django.shortcuts import render, redirect
 from .forms import ProductForm
 
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.select_related('category').all()[:100]
     return render(request, 'products/list.html', {'products': products})
 
 def product_add(request):
