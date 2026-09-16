@@ -1,7 +1,11 @@
 {% extends 'base.html' %} {% block content %}
 <h2>Add Order</h2>
 <form method="post">
-  {% csrf_token %} {{ form.as_p }}
+  {% csrf_token %}
+  <h4>Order Details</h4>
+  {{ order_form.as_p }}
+  <h4>First Item</h4>
+  {{ item_form.as_p }}
   <button type="submit" class="btn btn-success">Save</button>
 </form>
 {% endblock %}
