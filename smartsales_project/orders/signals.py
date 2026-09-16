@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Order
 
-N8N_WEBHOOK_URL = "http://localhost:5678/webhook-test/new-order"
+N8N_WEBHOOK_URL = "http://localhost:5678/webhook/new-order"
 
 @receiver(post_save, sender=Order)
 def notify_n8n_on_order_created(sender, instance, created, **kwargs):

@@ -30,16 +30,16 @@ def order_add(request):
         order_form = OrderForm(request.POST)
         item_form = OrderItemForm(request.POST)
         if order_form.is_valid() and item_form.is_valid():
+            quantity = item_form.cleaned_data['quantity']
+            unit_price = item_form.cleaned_data['unit_price']
+
             order = order_form.save(commit=False)
-            order.total_amount = 0
+            order.total_amount = quantity * unit_price
             order.save()
 
             item = item_form.save(commit=False)
             item.order = order
             item.save()
-
-            order.total_amount = item.quantity * item.unit_price
-            order.save()
 
             return redirect('order_list')
     else:
