@@ -9,7 +9,7 @@ from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_li
 
 from analytics.views import (
     RevenueAnalyticsView, OrdersAnalyticsView, 
-    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView
+    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView
 )
 router = DefaultRouter()
 router.register(r'customers', CustomerViewSet)
@@ -42,4 +42,5 @@ path('api/analytics/products/', ProductsAnalyticsView.as_view(), name='products_
 path('api/analytics/customers/', CustomersAnalyticsView.as_view(), name='customers_analytics'),
 path('api/analytics/rfm/', RFMAnalyticsView.as_view(), name='rfm_analytics'),
 path('api/analytics/anomalies/', SalesAnomalyView.as_view(), name='sales_anomalies'),
+path('api/analytics/winback-candidates/', WinBackCandidatesView.as_view(), name='winback_candidates'),
 ]

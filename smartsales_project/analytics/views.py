@@ -70,3 +70,12 @@ class SalesAnomalyView(APIView):
     def get(self, request):
         data = run_query("SELECT * FROM vw_sales_anomaly ORDER BY sale_date DESC LIMIT 50")
         return Response(data)
+
+
+
+class WinBackCandidatesView(APIView):
+    permission_classes  = [IsManager| IsAnalyst]
+
+    def get (self,request):
+        data = run_query("SELECT * FROM vw_winback_candidates")
+        return Response(data)
