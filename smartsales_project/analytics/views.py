@@ -63,3 +63,10 @@ class RFMAnalyticsView(APIView):
     def get(self, request):
         data = run_query("SELECT * FROM vw_rfm_segments ORDER BY monetary DESC LIMIT 50")
         return Response(data)
+
+class SalesAnomalyView(APIView):
+    permission_classes = [IsManager | IsAnalyst]
+
+    def get(self, request):
+        data = run_query("SELECT * FROM vw_sales_anomaly ORDER BY sale_date DESC LIMIT 50")
+        return Response(data)

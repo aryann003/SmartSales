@@ -1,0 +1,117 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-order",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d1639176-2414-466c-8953-f0c19133c734",
+      "name": "Webhook",
+      "webhookId": "b14e1688-747e-4daf-867b-6dbd4b130620"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6512f976-04f9-42fe-b7c2-2210e0bc95bc",
+              "leftValue": "={{ $json.body.amount }}",
+              "rightValue": 10000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "245f2a7a-6776-4c46-9bbf-55f49a0336ee",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "your-email@example.com",
+        "toEmail": "manager-email@example.com",
+        "subject": "=High Value Order Alert - Order #{{ $json.body.order_id }}",
+        "html": "=     HIGH VALUE ORDER ALERT\n\n     Order ID: {{ $json.body.order_id }}\n     Customer ID: {{ $json.body.customer_id }}\n     Amount: ₹{{ $json.body.amount }}\n     Status: {{ $json.body.status }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "350730cd-e4fa-4069-acff-5208de215c45",
+      "name": "Send an Email",
+      "webhookId": "84937dc7-af10-492d-9aa5-390db4297680",
+      "credentials": {
+        "smtp": {
+          "id": "XrVRKVed1jeU6MOY",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d1d0ba68-4085-45ea-8249-a2052362c8e6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED"
+  },
+  "id": "ES7V5tagzjgMCrgB",
+  "tags": []
+}
