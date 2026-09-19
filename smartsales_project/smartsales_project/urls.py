@@ -6,10 +6,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from customers.views import CustomerViewSet, customer_list, customer_add
 from products.views import CategoryViewSet, ProductViewSet, product_list, product_add
 from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_list, order_add, return_list
-
 from analytics.views import (
     RevenueAnalyticsView, OrdersAnalyticsView, 
-    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView
+    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView, LogAutomationView
 )
 router = DefaultRouter()
 router.register(r'customers', CustomerViewSet)
@@ -43,4 +42,5 @@ path('api/analytics/customers/', CustomersAnalyticsView.as_view(), name='custome
 path('api/analytics/rfm/', RFMAnalyticsView.as_view(), name='rfm_analytics'),
 path('api/analytics/anomalies/', SalesAnomalyView.as_view(), name='sales_anomalies'),
 path('api/analytics/winback-candidates/', WinBackCandidatesView.as_view(), name='winback_candidates'),
+path('api/analytics/log/', LogAutomationView.as_view(), name='log_automation'),
 ]

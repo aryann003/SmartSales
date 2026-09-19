@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.db import connection
 
 from core.permissions import IsManager, IsAnalyst
+from rest_framework.permissions import AllowAny
 def run_query(sql):
     with connection.cursor() as cursor:
         cursor.execute(sql)
@@ -79,3 +80,21 @@ class WinBackCandidatesView(APIView):
     def get (self,request):
         data = run_query("SELECT * FROM vw_winback_candidates")
         return Response(data)
+
+
+
+from core.models import AutomationLog
+
+
+class LogAutomationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self,request):
+        AutomationLog.objects.create(
+            workflow_name=request.data.get('workflow_name','Unknown'),
+            event_type=request.data.get('event_type','Unknown'),
+            status=request.data.get('status', 'SUCCESS'),
+            message = request.data.get('message', '')
+
+        )
+        return Response({'status' : 'logged'})
