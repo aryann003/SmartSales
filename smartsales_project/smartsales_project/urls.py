@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from core.views import dashboard
 from customers.views import CustomerViewSet, customer_list, customer_add
 from products.views import CategoryViewSet, ProductViewSet, product_list, product_add
 from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_list, order_add, return_list
@@ -10,6 +11,7 @@ from analytics.views import (
     RevenueAnalyticsView, OrdersAnalyticsView, 
     ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView, LogAutomationView
 )
+
 router = DefaultRouter()
 router.register(r'customers', CustomerViewSet)
 router.register(r'categories', CategoryViewSet)
@@ -24,6 +26,8 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    path('dashboard/', dashboard, name='dashboard'),
+
     path('customers/', customer_list, name='customer_list'),
     path('customers/add/', customer_add, name='customer_add'),
 
@@ -37,10 +41,10 @@ urlpatterns = [
 
     path('api/analytics/revenue/', RevenueAnalyticsView.as_view(), name='revenue_analytics'),
     path('api/analytics/orders/', OrdersAnalyticsView.as_view(), name='orders_analytics'),
-path('api/analytics/products/', ProductsAnalyticsView.as_view(), name='products_analytics'),
-path('api/analytics/customers/', CustomersAnalyticsView.as_view(), name='customers_analytics'),
-path('api/analytics/rfm/', RFMAnalyticsView.as_view(), name='rfm_analytics'),
-path('api/analytics/anomalies/', SalesAnomalyView.as_view(), name='sales_anomalies'),
-path('api/analytics/winback-candidates/', WinBackCandidatesView.as_view(), name='winback_candidates'),
-path('api/analytics/log/', LogAutomationView.as_view(), name='log_automation'),
+    path('api/analytics/products/', ProductsAnalyticsView.as_view(), name='products_analytics'),
+    path('api/analytics/customers/', CustomersAnalyticsView.as_view(), name='customers_analytics'),
+    path('api/analytics/rfm/', RFMAnalyticsView.as_view(), name='rfm_analytics'),
+    path('api/analytics/anomalies/', SalesAnomalyView.as_view(), name='sales_anomalies'),
+    path('api/analytics/winback-candidates/', WinBackCandidatesView.as_view(), name='winback_candidates'),
+    path('api/analytics/log/', LogAutomationView.as_view(), name='log_automation'),
 ]

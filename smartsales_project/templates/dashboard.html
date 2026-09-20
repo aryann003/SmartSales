@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block title %}Dashboard - SmartSales{% endblock %}
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3">
+  <div class="col-md-3">
+    <div class="card card-stat p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="text-muted small">Total Customers</div>
+          <h3 class="mb-0">{{ total_customers }}</h3>
+        </div>
+        <i class="bi bi-people-fill fs-1 text-primary opacity-50"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card card-stat p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="text-muted small">Total Orders</div>
+          <h3 class="mb-0">{{ total_orders }}</h3>
+        </div>
+        <i class="bi bi-cart-check-fill fs-1 text-success opacity-50"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card card-stat p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="text-muted small">Total Products</div>
+          <h3 class="mb-0">{{ total_products }}</h3>
+        </div>
+        <i class="bi bi-box-seam-fill fs-1 text-warning opacity-50"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card card-stat p-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <div class="text-muted small">Total Returns</div>
+          <h3 class="mb-0">{{ total_returns }}</h3>
+        </div>
+        <i class="bi bi-arrow-return-left fs-1 text-danger opacity-50"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <div class="card card-stat p-4">
+    <h5>Quick Links</h5>
+    <div class="d-flex gap-2 mt-2">
+      <a href="{% url 'customer_add' %}" class="btn btn-primary btn-sm"
+        ><i class="bi bi-person-plus me-1"></i>Add Customer</a
+      >
+      <a href="{% url 'product_add' %}" class="btn btn-primary btn-sm"
+        ><i class="bi bi-plus-square me-1"></i>Add Product</a
+      >
+      <a href="{% url 'order_add' %}" class="btn btn-primary btn-sm"
+        ><i class="bi bi-cart-plus me-1"></i>Add Order</a
+      >
+    </div>
+  </div>
+</div>
+{% endblock %}

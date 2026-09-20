@@ -1,26 +1,52 @@
-{% extends 'base.html' %} {% block content %}
-<h2>Products</h2>
-<a href="{% url 'product_add' %}" class="btn btn-primary mb-3">+ Add Product</a>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Category</th>
-      <th>Price</th>
-      <th>Cost</th>
-      <th>Stock</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for p in products %}
-    <tr>
-      <td>{{ p.name }}</td>
-      <td>{{ p.category }}</td>
-      <td>{{ p.price }}</td>
-      <td>{{ p.cost }}</td>
-      <td>{{ p.stock }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% extends 'base.html' %} {% block title %}Products - SmartSales{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Products</h2>
+  <a href="{% url 'product_add' %}" class="btn btn-primary">
+    <i class="bi bi-plus-square me-1"></i>Add Product
+  </a>
+</div>
+
+<div class="card card-stat">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Cost</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ p.name }}</td>
+          <td>
+            <span class="badge bg-light text-dark">{{ p.category }}</span>
+          </td>
+          <td>Rs.{{ p.price }}</td>
+          <td>Rs.{{ p.cost }}</td>
+          <td>
+            {% if p.stock > 0 %}
+            <span class="badge bg-success-subtle text-success"
+              >{{ p.stock }} in stock</span
+            >
+            {% else %}
+            <span class="badge bg-danger-subtle text-danger">Out of stock</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            No products found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}

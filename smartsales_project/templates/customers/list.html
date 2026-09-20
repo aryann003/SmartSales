@@ -1,26 +1,40 @@
-{% extends 'base.html' %} {% block content %}
-<h2>Customers</h2>
-<a href="{% url 'customer_add' %}" class="btn btn-primary mb-3"
-  >+ Add Customer</a
->
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Country</th>
-      <th>Signup Date</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for c in customers %}
-    <tr>
-      <td>{{ c.name }}</td>
-      <td>{{ c.email }}</td>
-      <td>{{ c.country }}</td>
-      <td>{{ c.signup_date }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% extends 'base.html' %} {% block title %}Customers - SmartSales{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Customers</h2>
+  <a href="{% url 'customer_add' %}" class="btn btn-primary">
+    <i class="bi bi-person-plus me-1"></i>Add Customer
+  </a>
+</div>
+
+<div class="card card-stat">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Country</th>
+          <th>Signup Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td>{{ c.name }}</td>
+          <td>{{ c.email }}</td>
+          <td><span class="badge bg-light text-dark">{{ c.country }}</span></td>
+          <td>{{ c.signup_date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="text-center text-muted py-4">
+            No customers found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 {% endblock %}
