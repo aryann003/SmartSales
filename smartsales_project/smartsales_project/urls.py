@@ -11,6 +11,7 @@ from analytics.views import (
     RevenueAnalyticsView, OrdersAnalyticsView, 
     ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView, LogAutomationView
 )
+from django.contrib.auth import views as auth_views
 
 router = DefaultRouter()
 router.register(r'customers', CustomerViewSet)
@@ -47,4 +48,7 @@ urlpatterns = [
     path('api/analytics/anomalies/', SalesAnomalyView.as_view(), name='sales_anomalies'),
     path('api/analytics/winback-candidates/', WinBackCandidatesView.as_view(), name='winback_candidates'),
     path('api/analytics/log/', LogAutomationView.as_view(), name='log_automation'),
+
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 ]

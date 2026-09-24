@@ -65,11 +65,18 @@
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-dark bg-dark px-3 sticky-top">
+    <nav
+      class="navbar navbar-dark bg-dark px-3 sticky-top d-flex justify-content-between"
+    >
       <a class="navbar-brand" href="{% url 'dashboard' %}">
         <i class="bi bi-graph-up-arrow me-2"></i>SmartSales
       </a>
-      <span class="text-light small">Sales Intelligence Platform</span>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-light small">{{ request.user.username }}</span>
+        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm"
+          >Logout</a
+        >
+      </div>
     </nav>
 
     <div class="d-flex">

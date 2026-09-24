@@ -1,0 +1,28 @@
+{% extends 'base.html' %} {% block title %}Login - SmartSales{% endblock %} {%
+block content %}
+<div
+  class="d-flex justify-content-center align-items-center"
+  style="min-height: 70vh"
+>
+  <div class="card card-stat p-4" style="width: 400px">
+    <h3 class="text-center mb-4">
+      <i class="bi bi-graph-up-arrow"></i> SmartSales
+    </h3>
+    {% if form.errors %}
+    <div class="alert alert-danger">Invalid username or password.</div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
