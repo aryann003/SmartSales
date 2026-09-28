@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from .models import Order, OrderItem, Return
 from .serializers import OrderSerializer, OrderItemSerializer, ReturnSerializer
 from .forms import OrderForm, OrderItemForm
+from django.contrib.auth.decorators import login_required
+
 
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -19,12 +21,12 @@ class ReturnViewSet(viewsets.ModelViewSet):
     queryset = Return.objects.all()
     serializer_class = ReturnSerializer
 
-
+@login_required
 def order_list(request):
     orders = Order.objects.select_related('customer').all()[:100]
     return render(request, 'orders/list.html', {'orders': orders})
 
-
+@login_required
 def order_add(request):
     if request.method == 'POST':
         order_form = OrderForm(request.POST)
@@ -47,7 +49,7 @@ def order_add(request):
         item_form = OrderItemForm()
     return render(request, 'orders/form.html', {'order_form': order_form, 'item_form': item_form})
 
-
+@login_required
 def return_list(request):
     returns = Return.objects.select_related('order', 'product').all()[:100]
     return render(request, 'orders/returns_list.html', {'returns': returns})

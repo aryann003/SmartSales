@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -23,10 +24,14 @@ class ProductViewSet(viewsets.ModelViewSet):
 from django.shortcuts import render, redirect
 from .forms import ProductForm
 
+
+@login_required
 def product_list(request):
     products = Product.objects.select_related('category').all()[:100]
     return render(request, 'products/list.html', {'products': products})
 
+
+@login_required
 def product_add(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)

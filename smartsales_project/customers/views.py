@@ -6,7 +6,7 @@ from .models import Customer
 from .serializers import CustomerSerializer
 
 from core.permissions import IsSalesperson
-
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -15,7 +15,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     permission_classes = [IsSalesperson]
 
-
+@login_required
 def customer_list(request):
     customers = Customer.objects.all()[:100]
     return render(request, 'customers/list.html', {'customers' :customers})
@@ -25,6 +25,8 @@ def customer_list(request):
 from django.shortcuts import render, redirect
 from .forms import CustomerForm
 
+
+@login_required
 def customer_add(request):
     if request.method == 'POST':
         form = CustomerForm(request.POST)

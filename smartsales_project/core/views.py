@@ -5,6 +5,11 @@ from customers.models import Customer
 from orders.models import Order
 from products.models import Product
 from orders.models import Order, Return
+from django.contrib.auth.decorators import login_required
+
+
+
+@login_required
 def dashboard(request):
     context = {
         'total_customers': Customer.objects.count(),
