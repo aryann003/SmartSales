@@ -7,7 +7,7 @@ An end-to-end sales analytics and automation platform. Django + PostgreSQL run t
 
 ## Problem Statement
 
-A small or medium business needs to manage customers, products, orders and returns, and turn raw sales data into decisions: monitor KPIs, spot unusual sales drops, identify high-value customers, and win back customers who stopped buying. SmartSales moves the business from *raw data → manual analysis → manual reporting* to *data → analytics → automated action*.
+A small or medium business needs to manage customers, products, orders and returns, and turn raw sales data into decisions: monitor KPIs, spot unusual sales drops, identify high-value customers, and win back customers who stopped buying. SmartSales moves the business from _raw data → manual analysis → manual reporting_ to _data → analytics → automated action_.
 
 ## Features
 
@@ -18,6 +18,30 @@ A small or medium business needs to manage customers, products, orders and retur
 - RFM customer segmentation (Champions, Loyal Customers, Potential Loyalists, New Customers, At Risk, Lost)
 - 5 n8n automations plus an automation-log monitoring table
 - 4-page Power BI dashboard on a star schema with 12+ DAX measures
+
+## Screenshots
+
+### Web Application
+
+#### Dashboard
+
+![Dashboard](docs/dashboard.png)
+
+#### Customers
+
+![Customers](docs/customers.png)
+
+#### Products
+
+![Products](docs/products.png)
+
+#### Orders
+
+![Orders](docs/orders.png)
+
+#### Returns
+
+![Returns](docs/returns.png)
 
 ## Architecture
 
@@ -44,15 +68,15 @@ A small or medium business needs to manage customers, products, orders and retur
 
 ## Technology Stack
 
-| Layer | Technology |
-|---|---|
-| Backend | Django, Django REST Framework, SimpleJWT |
-| Database | PostgreSQL (Neon) |
-| Analytics | Python, Pandas, SQL |
-| BI | Power BI, DAX |
-| Automation | n8n (self-hosted) |
-| Frontend | HTML, CSS, Bootstrap, JavaScript |
-| Deployment | Render (Django), Neon (PostgreSQL) |
+| Layer      | Technology                               |
+| ---------- | ---------------------------------------- |
+| Backend    | Django, Django REST Framework, SimpleJWT |
+| Database   | PostgreSQL (Neon)                        |
+| Analytics  | Python, Pandas, SQL                      |
+| BI         | Power BI, DAX                            |
+| Automation | n8n (self-hosted)                        |
+| Frontend   | HTML, CSS, Bootstrap, JavaScript         |
+| Deployment | Render (Django), Neon (PostgreSQL)       |
 
 ## Database Schema
 
@@ -77,17 +101,17 @@ Core tables: Customer, Category, Product, Order, OrderItem, Return, plus Profile
 
 Auth: `POST /api/token/` returns access/refresh JWTs. Send `Authorization: Bearer <access>`.
 
-| Endpoint | Purpose |
-|---|---|
-| `/api/customers/`, `/api/products/`, `/api/orders/`, `/api/returns/` | CRUD (role-restricted) |
-| `/api/analytics/revenue/` | Daily revenue and order counts |
-| `/api/analytics/orders/` | Daily order counts |
-| `/api/analytics/products/` | Product revenue, profit, return rate |
-| `/api/analytics/customers/` | Customer metrics and tiers |
-| `/api/analytics/rfm/` | RFM segments |
-| `/api/analytics/anomalies/` | 7-day rolling-average drop detection |
-| `/api/analytics/winback-candidates/` | At-risk, high-value customers |
-| `/api/analytics/log/` (POST) | Workflow logging |
+| Endpoint                                                             | Purpose                              |
+| -------------------------------------------------------------------- | ------------------------------------ |
+| `/api/customers/`, `/api/products/`, `/api/orders/`, `/api/returns/` | CRUD (role-restricted)               |
+| `/api/analytics/revenue/`                                            | Daily revenue and order counts       |
+| `/api/analytics/orders/`                                             | Daily order counts                   |
+| `/api/analytics/products/`                                           | Product revenue, profit, return rate |
+| `/api/analytics/customers/`                                          | Customer metrics and tiers           |
+| `/api/analytics/rfm/`                                                | RFM segments                         |
+| `/api/analytics/anomalies/`                                          | 7-day rolling-average drop detection |
+| `/api/analytics/winback-candidates/`                                 | At-risk, high-value customers        |
+| `/api/analytics/log/` (POST)                                         | Workflow logging                     |
 
 Analytics endpoints require Manager or Analyst role.
 
@@ -96,9 +120,17 @@ Analytics endpoints require Manager or Analyst role.
 Exported (credentials redacted) in `n8n_workflows/`.
 
 1. **High-Value Order Alert** — Django signal → webhook → IF amount > ₹10,000 → email
+   ![High-Value Order Alert](docs/n8n2.png)
+
 2. **Daily Sales Report** — schedule → fetch token → revenue API → email
+   ![Daily Sales Report](docs/n8n3.png)
+
 3. **Sales Anomaly Detection** — schedule → anomalies API → IF drop > 30% → email
+   ![Sales Anomaly Detection](docs/n8n4.png)
+
 4. **Customer Win-Back** — schedule → win-back API → aggregate → one internal notification email
+   ![Customer Win-Back](docs/n8n1.png)
+
 5. **Automation Monitoring** — each workflow logs SUCCESS/FAILED/RETRY to `AutomationLog`
 
 ## Power BI
@@ -106,6 +138,22 @@ Exported (credentials redacted) in `n8n_workflows/`.
 Star schema: `FactSales`, `FactReturns`, `DimCustomer`, `DimProduct`, `DimCategory`, `DimOrder`, `DimDate`. Pages: Executive, Customer Intelligence, Product & Inventory, Operations.
 
 _Add screenshots here: `docs/powerbi-executive.png`, `docs/powerbi-customers.png`, `docs/powerbi-products.png`, `docs/powerbi-operations.png`_
+
+### Executive Dashboard
+
+![Executive Dashboard](docs/dashboard1.png)
+
+### Customer Intelligence
+
+![Customer Intelligence](docs/dashboard2.png)
+
+### Product & Inventory
+
+![Product and Inventory](docs/dashboard3.png)
+
+### Operations
+
+![Operations](docs/dashboard4.png)
 
 ## Installation
 
@@ -132,7 +180,7 @@ DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 
 ## Known Limitations
 
-- Source data is the public Kaggle *Online Retail II* dataset; dates were shifted forward so history ends near today
+- Source data is the public Kaggle _Online Retail II_ dataset; dates were shifted forward so history ends near today
 - Customer names are generated placeholders; all imported orders are `completed`; all products share one "Imported" category
 - Django (Render) and n8n (Render, with Supabase as its own metadata store) both run on free tiers that spin down after ~15 minutes of inactivity. The first request after idle time can take 30-50 seconds, and if both services happen to be asleep at the same moment, a workflow call between them can time out before either finishes waking up. A production deployment would use always-on instances or an uptime pinger to avoid this
 - Power BI uses Import mode with manual refresh (Power BI Service was unavailable on the student licence)

@@ -1,0 +1,45 @@
+Traceback (most recent call last):
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\smartsales_project\manage.py", line 22, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\smartsales_project\manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\django\core\management\__init__.py", line 443, in execute_from_command_line
+    utility.execute()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\django\core\management\__init__.py", line 383, in execute
+    settings.INSTALLED_APPS
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\django\conf\__init__.py", line 122, in __getattr__
+    self._setup(name)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\django\conf\__init__.py", line 109, in _setup
+    self._wrapped = Settings(settings_module)
+                    ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\django\conf\__init__.py", line 251, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "C:\Users\asus\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\smartsales_project\smartsales_project\settings.py", line 13, in <module>
+    DEBUG = config('DEBUG', default=False, cast=bool)
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\decouple.py", line 248, in __call__
+    return self.config(*args, **kwargs)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\decouple.py", line 107, in __call__
+    return self.get(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\decouple.py", line 101, in get
+    return cast(value)
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\decouple.py", line 74, in _cast_boolean
+    return bool(value) if value == '' else bool(strtobool(value))
+                                                ~~~~~~~~~^^^^^^^
+  File "C:\Users\asus\OneDrive\Desktop\smartsales\venv\Lib\site-packages\decouple.py", line 43, in strtobool
+    raise ValueError("Invalid truth value: " + value)
+ValueError: Invalid truth value: release
