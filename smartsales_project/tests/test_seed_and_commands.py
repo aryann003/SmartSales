@@ -52,6 +52,29 @@ class TestSeedDemoData:
         call_command("seed_demo_data", "--if-empty")
         assert Order.objects.count() == before and "skipping" in capsys.readouterr().out
 
+    def test_if_empty_still_creates_demo_users_on_a_database_that_already_has_data(self, sample_data):
+        """Regression: an existing database (real data) must still get the demo logins."""
+        before = (Order.objects.count(), Customer.objects.count())
+        call_command("seed_demo_data", "--if-empty")
+        assert (Order.objects.count(), Customer.objects.count()) == before
+        assert User.objects.filter(username__startswith="demo_").count() == 4
+
+    def test_users_only_never_touches_sales_data(self, sample_data, capsys):
+        before = (Order.objects.count(), OrderItem.objects.count(), Customer.objects.count())
+        call_command("seed_demo_data", "--users-only")
+        call_command("seed_demo_data", "--users-only")  # idempotent
+        assert (Order.objects.count(), OrderItem.objects.count(), Customer.objects.count()) == before
+        assert User.objects.filter(username__startswith="demo_").count() == 4
+        assert "0 created" in capsys.readouterr().out
+
+    def test_demo_users_keep_an_existing_password(self, db):
+        call_command("seed_demo_data", "--users-only")
+        user = User.objects.get(username="demo_manager")
+        user.set_password("ChangedByOwner1!")
+        user.save()
+        call_command("seed_demo_data", "--users-only")
+        assert User.objects.get(username="demo_manager").check_password("ChangedByOwner1!")
+
     def test_refuses_to_duplicate_unless_replace(self, seeded):
         with pytest.raises(CommandError, match="already exist"):
             call_command("seed_demo_data")

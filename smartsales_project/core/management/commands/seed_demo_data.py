@@ -33,6 +33,21 @@ DEMO_USERS = [("demo_admin", "admin"), ("demo_manager", "manager"),
               ("demo_analyst", "analyst"), ("demo_salesperson", "salesperson")]
 
 
+def ensure_demo_users():
+    """Create one user per role (idempotent). Never touches sales data."""
+    password = os.environ.get("DEMO_PASSWORD", "DemoPass123!")
+    created = []
+    for username, role in DEMO_USERS:
+        user, was_created = User.objects.get_or_create(username=username)
+        if was_created:
+            user.set_password(password)
+            user.save()
+            created.append(username)
+        user.profile.role = role
+        user.profile.save()
+    return created
+
+
 class Command(BaseCommand):
     help = "Create demo catalog, customers, orders, returns and one user per role."
 
@@ -42,13 +57,23 @@ class Command(BaseCommand):
         parser.add_argument("--seed", type=int, default=42)
         parser.add_argument("--replace", action="store_true", help="Delete existing sales data first")
         parser.add_argument("--if-empty", action="store_true",
-                            help="Do nothing (exit 0) when orders already exist; safe to run on every deploy")
+                            help="Skip the sales data when orders already exist (demo users are still ensured); "
+                                 "safe to run on every deploy")
+        parser.add_argument("--users-only", action="store_true",
+                            help="Only create the demo users; never touches sales data")
 
     @transaction.atomic
     def handle(self, *args, **opts):
+        if opts["users_only"]:
+            created = ensure_demo_users()
+            self.stdout.write(self.style.SUCCESS(
+                f"Demo users ready ({len(created)} created, {len(DEMO_USERS) - len(created)} already existed)."))
+            return
+
         if Order.objects.exists():
             if opts["if_empty"]:
-                self.stdout.write("Orders already exist, skipping demo data.")
+                ensure_demo_users()
+                self.stdout.write("Orders already exist, skipping demo sales data (demo users ensured).")
                 return
             if not opts["replace"]:
                 raise CommandError("Orders already exist. Use --replace to reseed.")
@@ -56,16 +81,7 @@ class Command(BaseCommand):
             Category.objects.all().delete()
 
         rng = random.Random(opts["seed"])
-        password = os.environ.get("DEMO_PASSWORD", "DemoPass123!")
-
-        # users, one per role
-        for username, role in DEMO_USERS:
-            user, created = User.objects.get_or_create(username=username)
-            if created:
-                user.set_password(password)
-                user.save()
-            user.profile.role = role
-            user.profile.save()
+        ensure_demo_users()
 
         # catalog
         products = []
