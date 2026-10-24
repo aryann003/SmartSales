@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from django.views.generic import RedirectView
+from core.auth_views import ThrottledTokenObtainPairView
 
 from core.views import dashboard
 from customers.views import CustomerViewSet, customer_list, customer_add
@@ -9,7 +12,7 @@ from products.views import CategoryViewSet, ProductViewSet, product_list, produc
 from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_list, order_add, return_list
 from analytics.views import (
     RevenueAnalyticsView, OrdersAnalyticsView, 
-    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView, LogAutomationView
+    ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView, LogAutomationView, DailyReportView
 )
 from django.contrib.auth import views as auth_views
 
@@ -22,9 +25,12 @@ router.register(r'order-items', OrderItemViewSet)
 router.register(r'returns', ReturnViewSet)
 
 urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='dashboard', permanent=False)),
     path('admin/', admin.site.urls),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/', include(router.urls)),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', ThrottledTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('dashboard/', dashboard, name='dashboard'),
@@ -48,6 +54,7 @@ urlpatterns = [
     path('api/analytics/anomalies/', SalesAnomalyView.as_view(), name='sales_anomalies'),
     path('api/analytics/winback-candidates/', WinBackCandidatesView.as_view(), name='winback_candidates'),
     path('api/analytics/log/', LogAutomationView.as_view(), name='log_automation'),
+    path('api/automation/daily-report/', DailyReportView.as_view(), name='daily_report'),
 
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),

@@ -1,13 +1,14 @@
+import logging
+
 import pandas as pd
 
-def load_raw_data(filepath='data/online_retail_II.csv'):
-    df = pd.read_csv(filepath)
+logger = logging.getLogger("smartsales.pipeline")
 
-    print(f"Loaded {len(df)} raw rows from {filepath}")
+DEFAULT_PATH = "data/online_retail_II.csv"
+
+
+def load_raw_data(filepath=DEFAULT_PATH, limit=None):
+    """Read the raw Online Retail II CSV. ``limit`` keeps only the first N rows."""
+    df = pd.read_csv(filepath, nrows=limit)
+    logger.info("Loaded %d raw rows from %s", len(df), filepath)
     return df
-
-
-if __name__ == '__main__':
-    df = load_raw_data()
-    print(df.head())
-

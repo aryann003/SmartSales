@@ -1,0 +1,30 @@
+# Render blueprint. The database lives outside Render (e.g. Neon) so it does not
+# expire after 30 days: set DATABASE_URL in the dashboard.
+services:
+  - type: web
+    name: smartsales
+    runtime: python
+    rootDir: smartsales_project
+    plan: free
+    branch: master
+    buildCommand: bash build.sh
+    startCommand: gunicorn smartsales_project.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTOMATION_API_KEY
+        generateValue: true
+      - key: WEBHOOK_SECRET
+        generateValue: true
+      - key: N8N_WEBHOOK_URL
+        sync: false
+      - key: REPORT_RECIPIENTS
+        sync: false
+      - key: SEED_DEMO
+        value: "true"

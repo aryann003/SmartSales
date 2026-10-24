@@ -6,3 +6,10 @@ db.sqlite3
 .DS_Store
 smartsales.log
 data/
+# Build and test artifacts
+staticfiles/
+.coverage
+.pytest_cache/
+htmlcov/
+runserver.out
+runserver.err

@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: smartsales
+      POSTGRES_USER: smartsales
+      POSTGRES_PASSWORD: smartsales
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartsales"]
+      interval: 5s
+      retries: 10
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: dev-only-change-me
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: postgres://smartsales:smartsales@db:5432/smartsales
+      AUTOMATION_API_KEY: dev-automation-key
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

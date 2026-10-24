@@ -4,19 +4,23 @@ from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 from django.contrib.auth.decorators import login_required
 
+from core.permissions import CanManageCatalog
+
 
 
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.order_by('id')
     serializer_class = CategorySerializer
+    permission_classes = [CanManageCatalog]
 
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related('category').order_by('id')
     serializer_class = ProductSerializer
+    permission_classes = [CanManageCatalog]
 # Create your views here.
 
 

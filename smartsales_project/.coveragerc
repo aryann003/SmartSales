@@ -1,0 +1,10 @@
+[run]
+source = .
+omit =
+    */migrations/*
+    tests/*
+    manage.py
+    explore_data.py
+    smartsales_project/asgi.py
+    smartsales_project/wsgi.py
+    staticfiles/*

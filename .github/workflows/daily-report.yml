@@ -1,0 +1,30 @@
+name: Daily sales report
+
+# Triggers the report endpoint on a schedule (09:00 IST). Render's free tier has no
+# cron jobs, so GitHub Actions calls the secured endpoint instead.
+# Required repository secrets: SMARTSALES_URL (e.g. https://smartsales-xxxx.onrender.com)
+# and AUTOMATION_API_KEY (the same value configured on the server).
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the daily report endpoint
+        env:
+          SMARTSALES_URL: ${{ secrets.SMARTSALES_URL }}
+          AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+        run: |
+          if [ -z "$SMARTSALES_URL" ] || [ -z "$AUTOMATION_API_KEY" ]; then
+            echo "SMARTSALES_URL / AUTOMATION_API_KEY secrets are not set; skipping."
+            exit 0
+          fi
+          # The free instance may be asleep: allow a long first response and retry.
+          curl --fail-with-body --silent --show-error \
+            --retry 5 --retry-delay 20 --retry-all-errors --max-time 120 \
+            -X POST "$SMARTSALES_URL/api/automation/daily-report/" \
+            -H "X-Automation-Token: $AUTOMATION_API_KEY" \
+            -H "Content-Type: application/json" -d '{}'

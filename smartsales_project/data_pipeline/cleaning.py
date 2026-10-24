@@ -1,9 +1,14 @@
+import logging
+
 import pandas as pd
+
+logger = logging.getLogger("smartsales.pipeline")
 
 
 def clean_data(df):
     """Apply all cleaning rules identified during Day 8 exploration."""
 
+    df = df.copy()  # never mutate the caller's DataFrame
     initial_count = len(df)
 
     # 1. Drop rows with missing Customer ID — can't attribute revenue to no one
@@ -45,20 +50,7 @@ def clean_data(df):
     })
 
     final_count = len(df)
-    print(f"Cleaning complete: {initial_count} raw rows -> {final_count} clean rows "
-          f"({initial_count - final_count} removed)")
+    logger.info("Cleaning complete: %d raw rows -> %d clean rows (%d removed)",
+                initial_count, final_count, initial_count - final_count)
 
     return df
-
-
-if __name__ == '__main__':
-    from ingestion import load_raw_data
-
-    df_raw = load_raw_data()
-    df_clean = clean_data(df_raw)
-
-    print("\nCleaned columns:", list(df_clean.columns))
-    print("\nSample of cleaned data:")
-    print(df_clean.head())
-    print("\nReturn rows:", df_clean['is_return'].sum())
-    print("Sale rows:", (~df_clean['is_return']).sum())

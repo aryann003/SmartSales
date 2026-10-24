@@ -5,15 +5,15 @@ from rest_framework import viewsets
 from .models import Customer
 from .serializers import CustomerSerializer
 
-from core.permissions import IsSalesperson
+from core.permissions import CanManageSalesData
 from django.contrib.auth.decorators import login_required
 
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
-    queryset = Customer.objects.all()
+    queryset = Customer.objects.order_by('id')
     serializer_class = CustomerSerializer
-    permission_classes = [IsSalesperson]
+    permission_classes = [CanManageSalesData]
 
 @login_required
 def customer_list(request):
