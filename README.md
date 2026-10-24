@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SmartSales: Sales Intelligence & Business Automation Platform
 
 [![CI](https://github.com/aryann003/SmartSales/actions/workflows/ci.yml/badge.svg)](https://github.com/aryann003/SmartSales/actions/workflows/ci.yml)
@@ -216,6 +215,3 @@ The build runs `bash build.sh` (install, collect static files, migrate, optional
 - Always-on hosting for n8n, or move all scheduling into Django
 - Weekday-aware anomaly detection
 - Machine learning extensions (churn prediction, demand forecasting)
-=======
-
->>>>>>> 74f1e56fc28fada792a85e5faad8d0dfdb45c143
