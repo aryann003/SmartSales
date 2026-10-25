@@ -14,7 +14,7 @@ Demo logins (password `DemoPass123!`): `demo_admin`, `demo_manager`, `demo_analy
 - **A transactional, idempotent ETL pipeline**: 1,067,371 raw rows cleaned to 797,815, loaded all-or-nothing.
 - **Reliable automation:** HMAC-signed webhooks, delivered after commit in the background, with retries, exponential backoff and an audit log.
 - **A secured scheduled report** that runs from GitHub Actions on a free hosting tier.
-- **210 automated tests (97% coverage)** running in CI against PostgreSQL.
+- **220+ automated tests (97% coverage)** running in CI against PostgreSQL.
 
 ## Features
 
@@ -160,7 +160,7 @@ pip install -r requirements-dev.txt
 pytest --cov
 ```
 
-The suite needs PostgreSQL (the SQL views use Postgres features); `DATABASE_URL` defaults to `postgres://smartsales:smartsales@localhost:5432/smartsales` in `pytest.ini`. It covers the role matrix on every endpoint, API validation, query counts, every SQL view, the ETL pipeline (each cleaning rule, the validation gate, idempotency and transactional rollback), webhook signing, retries and non-blocking delivery, the secured endpoints, and the daily report. CI runs it on every push against a PostgreSQL service container.
+The suite needs PostgreSQL (the SQL views use Postgres features); `DATABASE_URL` defaults to `postgres://smartsales:smartsales@localhost:5432/smartsales` in `pytest.ini`. It covers the role matrix on every endpoint, API validation, web pagination and return recording, query counts, every SQL view, the ETL pipeline (each cleaning rule, the validation gate, idempotency and transactional rollback), webhook signing, retries and non-blocking delivery, the secured endpoints, and the daily report. CI runs it on every push against a PostgreSQL service container.
 
 ## Run locally
 
@@ -178,7 +178,7 @@ Open http://localhost:8000 and sign in as `demo_manager` / `DemoPass123!`.
 
 ```bash
 cd smartsales_project
-python -m venv venv && source venv/bin/activate     # Windows: venv\Scripts\activate
+python -m venv venv && source venv/bin/activate     # Windows PowerShell: .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py seed_demo_data
@@ -196,7 +196,7 @@ python manage.py runserver
 | `DEBUG` | `False` in production |
 | `N8N_WEBHOOK_URL` | Optional: where order webhooks are sent |
 | `REPORT_RECIPIENTS` | Optional: daily report email recipients |
-| `SEED_DEMO` | `true` seeds demo data on deploy when the database is empty |
+| `SEED_DEMO` | `true` creates the four demo users on every deploy, and demo sales data too when the database is empty (it never overwrites existing data) |
 | `EMAIL_*` | Optional SMTP settings (the console backend is used otherwise) |
 
 The build runs `bash build.sh` (install, collect static files, migrate, optional seed).
