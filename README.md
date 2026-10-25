@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/aryann003/SmartSales/actions/workflows/ci.yml/badge.svg)](https://github.com/aryann003/SmartSales/actions/workflows/ci.yml)
 
-A sales operations and analytics platform. **Django + PostgreSQL** run the web app and REST API, **Pandas + SQL** power the analytics, **Power BI** delivers dashboards, and an **automation layer** (signed webhooks, scheduled reports, n8n workflows) turns data into action.
+A sales operations and analytics platform. **Django + PostgreSQL** run the web app and REST API, **Pandas + SQL** power the analytics, **Power BI** delivers dashboards, and an **automation layer** (n8n workflows, signed webhooks, a secured report endpoint) turns data into action.
 
 **Live demo:** https://smartsales-s06t.onrender.com (free tier; the first load can take about a minute)
 Demo logins (password `DemoPass123!`): `demo_admin`, `demo_manager`, `demo_analyst`, `demo_salesperson`. API docs: `/api/docs/`.
@@ -13,7 +13,7 @@ Demo logins (password `DemoPass123!`): `demo_admin`, `demo_manager`, `demo_analy
 - **A SQL analytics layer** (12 views with CTEs and window functions) created by a migration, so any fresh database works.
 - **A transactional, idempotent ETL pipeline**: 1,067,371 raw rows cleaned to 797,815, loaded all-or-nothing.
 - **Reliable automation:** HMAC-signed webhooks, delivered after commit in the background, with retries, exponential backoff and an audit log.
-- **A secured scheduled report** that runs from GitHub Actions on a free hosting tier.
+- **A token-secured daily-report endpoint** that n8n (or any scheduler) can call to build and email the report.
 - **220+ automated tests (97% coverage)** running in CI against PostgreSQL.
 
 ## Features
@@ -123,9 +123,11 @@ When an order is created, Django notifies the configured receiver (for example n
 - **Observable:** every attempt is stored in `AutomationLog` (`SUCCESS`, `RETRY`, `FAILED`).
 - Disabled automatically when `N8N_WEBHOOK_URL` is empty.
 
-### Scheduled daily report
+### Daily report endpoint
 
-`POST /api/automation/daily-report/` builds the report (revenue, orders, average order value, change versus the previous day, returns, top products, and an anomaly alert), emails it to `REPORT_RECIPIENTS`, and logs the run. Render's free tier has no cron jobs, so `.github/workflows/daily-report.yml` calls the endpoint every morning. Set the repository secrets `SMARTSALES_URL` and `AUTOMATION_API_KEY`. Locally: `python manage.py send_daily_report`.
+`POST /api/automation/daily-report/` builds the report (revenue, orders, average order value, change versus the previous day, returns, top products, and an anomaly alert), emails it to `REPORT_RECIPIENTS`, and logs the run. It is protected by the `X-Automation-Token` header, so the n8n **Daily Sales Report** workflow (or any scheduler) can call it. Locally: `python manage.py send_daily_report`.
+
+*Optional:* `.github/workflows/daily-report.yml` can call the endpoint from GitHub Actions instead. It does nothing unless you add the repository secrets `SMARTSALES_URL` and `AUTOMATION_API_KEY`.
 
 ### n8n workflows
 
@@ -204,7 +206,7 @@ The build runs `bash build.sh` (install, collect static files, migrate, optional
 ## Known limitations
 
 - The Kaggle dataset has generated customer names, a single "Imported" category, and all orders are `completed`; dates were shifted forward so the history ends near today.
-- Free tiers sleep when idle, so the first request can take about a minute. The scheduled report retries to cope with this.
+- Free tiers sleep when idle, so the first request can take about a minute.
 - The anomaly view compares each day to the trailing 7-day average without adjusting for weekends, so quiet weekends can be flagged.
 - Order totals are stored on the order and set by the caller or the web form; the API does not recompute them from items.
 - Power BI uses Import mode with manual refresh.
