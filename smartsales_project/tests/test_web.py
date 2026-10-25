@@ -1,11 +1,12 @@
 import datetime as dt
+from decimal import Decimal
 from unittest import mock
 
 import pytest
 from django.test import Client
 
 from customers.models import Customer
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, Return
 
 
 @pytest.fixture
@@ -19,13 +20,13 @@ def web(make_user):
 @pytest.mark.django_db
 class TestWebUi:
     @pytest.mark.parametrize("url", ["/dashboard/", "/customers/", "/products/", "/orders/", "/returns/",
-                                     "/customers/add/", "/products/add/", "/orders/add/"])
+                                     "/customers/add/", "/products/add/", "/orders/add/", "/returns/add/"])
     def test_login_required(self, url):
         resp = Client().get(url)
         assert resp.status_code == 302 and "/login/" in resp["Location"]
 
     @pytest.mark.parametrize("url", ["/dashboard/", "/customers/", "/products/", "/orders/", "/returns/",
-                                     "/customers/add/", "/products/add/", "/orders/add/"])
+                                     "/customers/add/", "/products/add/", "/orders/add/", "/returns/add/"])
     def test_pages_render_when_signed_in(self, web, sample_data, url):
         assert web.get(url).status_code == 200
 
@@ -43,6 +44,80 @@ class TestWebUi:
         resp = web.post("/customers/add/", {"name": "Neha", "email": "n@example.com", "country": "IN",
                                             "signup_date": "2026-03-01"})
         assert resp.status_code == 302 and Customer.objects.filter(email="n@example.com").exists()
+
+    def test_customer_list_paginates_and_keeps_requested_page_size(self, web):
+        Customer.objects.bulk_create([
+            Customer(name=f"Customer {index}", email=f"customer{index}@example.com", country="IN",
+                     signup_date=dt.date(2026, 1, 1))
+            for index in range(30)
+        ])
+        response = web.get("/customers/?page=2&per_page=10")
+        assert response.status_code == 200
+        assert len(response.context["customers"]) == 10
+        assert response.context["page_obj"].number == 2
+        assert b"Showing 11" in response.content and b"of 30" in response.content
+
+    def test_product_list_paginates(self, web, sample_data):
+        from products.models import Product
+
+        Product.objects.bulk_create([
+            Product(name=f"Product {index}", category=sample_data["category"], price=1, cost=1, stock=1)
+            for index in range(26)
+        ])
+        response = web.get("/products/?page=2&per_page=10")
+        assert response.status_code == 200
+        assert len(response.context["products"]) == 10
+        assert response.context["page_obj"].number == 2
+
+    def test_order_list_paginates(self, web, sample_data):
+        Order.objects.bulk_create([
+            Order(customer=sample_data["asha"], order_date=dt.date(2026, 6, 4), status="completed",
+                  total_amount=Decimal("10.00"))
+            for _ in range(26)
+        ])
+        response = web.get("/orders/?page=2&per_page=10")
+        assert response.status_code == 200
+        assert len(response.context["orders"]) == 10
+        assert response.context["page_obj"].number == 2
+
+    def test_return_page_paginates(self, web, sample_data):
+        Return.objects.bulk_create([
+            Return(order=sample_data["orders"][0], product=sample_data["mug"], quantity=1,
+                   reason="Test", return_date=dt.date(2026, 6, 4))
+            for _ in range(26)
+        ])
+        response = web.get("/returns/?page=2&per_page=10")
+        assert response.status_code == 200
+        assert len(response.context["returns"]) == 10
+        assert response.context["page_obj"].number == 2
+
+    def test_add_return(self, web, sample_data):
+        response = web.post("/returns/add/", {
+            "order": sample_data["orders"][0].id,
+            "product": sample_data["mug"].id,
+            "quantity": 1,
+            "reason": "Customer request",
+            "return_date": "2026-06-04",
+        })
+        assert response.status_code == 302 and response["Location"].endswith("/returns/")
+        assert Return.objects.filter(
+            order=sample_data["orders"][0],
+            product=sample_data["mug"],
+            quantity=1,
+            reason="Customer request",
+        ).exists()
+
+    def test_analyst_cannot_add_return(self, make_user, sample_data):
+        client = Client()
+        client.force_login(make_user("analyst", username="analyst"))
+        response = client.post("/returns/add/", {
+            "order": sample_data["orders"][0].id,
+            "product": sample_data["mug"].id,
+            "quantity": 1,
+            "reason": "Customer request",
+            "return_date": "2026-06-04",
+        })
+        assert response.status_code == 403
 
 
 @pytest.mark.django_db

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from rest_framework import viewsets
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -31,8 +32,16 @@ from .forms import ProductForm
 
 @login_required
 def product_list(request):
-    products = Product.objects.select_related('category').all()[:100]
-    return render(request, 'products/list.html', {'products': products})
+    products = Product.objects.select_related('category').order_by('id')
+    per_page = request.GET.get('per_page', '25')
+    if per_page not in {'10', '25', '50', '100'}:
+        per_page = '25'
+    page_obj = Paginator(products, int(per_page)).get_page(request.GET.get('page'))
+    return render(request, 'products/list.html', {
+        'products': page_obj,
+        'page_obj': page_obj,
+        'per_page': per_page,
+    })
 
 
 @login_required

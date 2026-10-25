@@ -9,7 +9,7 @@ from core.auth_views import ThrottledTokenObtainPairView
 from core.views import dashboard
 from customers.views import CustomerViewSet, customer_list, customer_add
 from products.views import CategoryViewSet, ProductViewSet, product_list, product_add
-from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_list, order_add, return_list
+from orders.views import OrderViewSet, OrderItemViewSet, ReturnViewSet, order_list, order_add, return_list, return_add
 from analytics.views import (
     RevenueAnalyticsView, OrdersAnalyticsView, 
     ProductsAnalyticsView, CustomersAnalyticsView, RFMAnalyticsView, SalesAnomalyView, WinBackCandidatesView, LogAutomationView, DailyReportView
@@ -45,6 +45,7 @@ urlpatterns = [
     path('orders/add/', order_add, name='order_add'),
 
     path('returns/', return_list, name='return_list'),
+    path('returns/add/', return_add, name='return_add'),
 
     path('api/analytics/revenue/', RevenueAnalyticsView.as_view(), name='revenue_analytics'),
     path('api/analytics/orders/', OrdersAnalyticsView.as_view(), name='orders_analytics'),

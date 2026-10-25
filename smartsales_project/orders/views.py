@@ -1,12 +1,14 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
 from rest_framework import viewsets
 from .models import Order, OrderItem, Return
 from .serializers import OrderSerializer, OrderItemSerializer, ReturnSerializer
-from .forms import OrderForm, OrderItemForm
+from .forms import OrderForm, OrderItemForm, ReturnForm
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
-from core.permissions import CanManageSalesData
+from core.permissions import CanManageSalesData, get_role
 
 
 
@@ -31,8 +33,16 @@ class ReturnViewSet(viewsets.ModelViewSet):
 
 @login_required
 def order_list(request):
-    orders = Order.objects.select_related('customer').order_by('-order_date', '-id')[:100]
-    return render(request, 'orders/list.html', {'orders': orders})
+    orders = Order.objects.select_related('customer').order_by('-order_date', '-id')
+    per_page = request.GET.get('per_page', '25')
+    if per_page not in {'10', '25', '50', '100'}:
+        per_page = '25'
+    page_obj = Paginator(orders, int(per_page)).get_page(request.GET.get('page'))
+    return render(request, 'orders/list.html', {
+        'orders': page_obj,
+        'page_obj': page_obj,
+        'per_page': per_page,
+    })
 
 @login_required
 def order_add(request):
@@ -62,5 +72,27 @@ def order_add(request):
 
 @login_required
 def return_list(request):
-    returns = Return.objects.select_related('order', 'product').all()[:100]
-    return render(request, 'orders/returns_list.html', {'returns': returns})
+    returns = Return.objects.select_related('order__customer', 'product').order_by('-return_date', '-id')
+    per_page = request.GET.get('per_page', '25')
+    if per_page not in {'10', '25', '50', '100'}:
+        per_page = '25'
+    page_obj = Paginator(returns, int(per_page)).get_page(request.GET.get('page'))
+    return render(request, 'orders/returns_list.html', {
+        'returns': page_obj,
+        'page_obj': page_obj,
+        'per_page': per_page,
+    })
+
+
+@login_required
+def return_add(request):
+    if get_role(request.user) not in {'admin', 'manager', 'salesperson'}:
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        form = ReturnForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('return_list')
+    else:
+        form = ReturnForm()
+    return render(request, 'orders/return_form.html', {'form': form})

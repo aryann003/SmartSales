@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Return - SmartSales{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <h2>Record Return</h2>
+  <p class="text-muted mb-0">Enter the order, product, quantity, and return date.</p>
+</div>
+
+<div class="card card-stat p-4" style="max-width: 720px;">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="d-flex gap-2 mt-3">
+      <button type="submit" class="btn btn-primary">Save Return</button>
+      <a href="{% url 'return_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

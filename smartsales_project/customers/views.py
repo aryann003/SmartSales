@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
 
 # Create your views here.
 from rest_framework import viewsets
@@ -17,8 +18,16 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 @login_required
 def customer_list(request):
-    customers = Customer.objects.all()[:100]
-    return render(request, 'customers/list.html', {'customers' :customers})
+    customers = Customer.objects.order_by('id')
+    per_page = request.GET.get('per_page', '25')
+    if per_page not in {'10', '25', '50', '100'}:
+        per_page = '25'
+    page_obj = Paginator(customers, int(per_page)).get_page(request.GET.get('page'))
+    return render(request, 'customers/list.html', {
+        'customers': page_obj,
+        'page_obj': page_obj,
+        'per_page': per_page,
+    })
 
 
 

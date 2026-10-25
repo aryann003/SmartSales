@@ -15,6 +15,7 @@
     <table class="table table-hover mb-0">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Customer</th>
           <th>Order Date</th>
           <th>Status</th>
@@ -24,6 +25,7 @@
       <tbody>
         {% for o in orders %}
         <tr>
+          <td>{{ o.id }}</td>
           <td>{{ o.customer }}</td>
           <td>{{ o.order_date }}</td>
           <td>
@@ -39,7 +41,7 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="4" class="text-center text-muted py-4">
+          <td colspan="5" class="text-center text-muted py-4">
             No orders found.
           </td>
         </tr>
@@ -48,4 +50,5 @@
     </table>
   </div>
 </div>
+{% include 'includes/pagination.html' %}
 {% endblock %}

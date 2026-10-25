@@ -18,7 +18,7 @@ Demo logins (password `DemoPass123!`): `demo_admin`, `demo_manager`, `demo_analy
 
 ## Features
 
-- Django web app: login, dashboard, customers, products, orders, returns
+- Django web app: login, dashboard, paginated customer/product/order/return lists, and return recording
 - REST API with JWT authentication, throttled login, and OpenAPI docs (Swagger UI at `/api/docs/`)
 - RFM customer segmentation (Champions, Loyal Customers, Potential Loyalists, New Customers, At Risk, Lost)
 - Sales anomaly detection against a trailing 7-day average, and win-back targeting
